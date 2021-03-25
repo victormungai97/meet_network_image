@@ -11,16 +11,8 @@ void main() {
 
     MeetNetworkImage meetNetworkImage = MeetNetworkImage(
       imageUrl: imageUrl,
-      loadingBuilder: (BuildContext context) {
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-      errorBuilder: (BuildContext context, Object error) {
-        return Center(
-          child: Text(error.toString()),
-        );
-      },
+      loadingBuilder: (BuildContext context) => Container(),
+      errorBuilder: (BuildContext context, Object error) => Container(),
     );
 
     var actualResponse = await meetNetworkImage.getUrlResponse();
