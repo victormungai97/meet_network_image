@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui show instantiateImageCodec, Codec;
 
+import 'package:basic_utils/basic_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -26,16 +27,16 @@ class MeetNetworkImageProvider extends ImageProvider<MeetNetworkImageProvider> {
   final double scale;
 
   /// Target image width to which the image shall be scaled after decoding
-  final int width;
+  final int? width;
 
   /// Target image height to which the image shall be scaled after decoding
-  final int height;
+  final int? height;
 
   /// Listener to be called when image fails to load
-  final ErrorListener errorListener;
+  final ErrorListener? errorListener;
 
   /// Set optional headers for the image provider, eg for authentication
-  final Map<String, String> headers;
+  final Map<String, String>? headers;
 
   /// Path to placeholder asset image file.
   /// Should be non-null so as to be loaded in case of network failure
@@ -44,7 +45,7 @@ class MeetNetworkImageProvider extends ImageProvider<MeetNetworkImageProvider> {
   /// Creates an [ImageProvider] which loads an image from the [_url], using the [scale].
   /// When the image fails to load, [errorListener] is called.
   const MeetNetworkImageProvider({
-    @required this.imageUrl,
+    required this.imageUrl,
     this.scale = 1.0,
     this.width,
     this.height,
@@ -52,14 +53,12 @@ class MeetNetworkImageProvider extends ImageProvider<MeetNetworkImageProvider> {
     this.errorListener,
 
     /// Cache key of the image to cache. Unused here
-    String cacheKey,
-    @required this.placeholderAssetPath,
-  })  : assert(imageUrl != null),
-        assert(scale != null),
-        assert(placeholderAssetPath != null);
+    String? cacheKey,
+    required this.placeholderAssetPath,
+  });
 
   /// This function will check to ensure that the [imageUrl] provided exists
-  bool isURLEmpty() => imageUrl == null || imageUrl == "" || imageUrl.isEmpty;
+  bool isURLEmpty() => StringUtils.isNullOrEmpty(imageUrl);
 
   @override
   Future<MeetNetworkImageProvider> obtainKey(ImageConfiguration configuration) {
@@ -77,9 +76,9 @@ class MeetNetworkImageProvider extends ImageProvider<MeetNetworkImageProvider> {
     );
   }
 
-  InformationCollector _imageStreamInformationCollector(
+  InformationCollector? _imageStreamInformationCollector(
       MeetNetworkImageProvider key) {
-    InformationCollector collector;
+    InformationCollector? collector;
     assert(() {
       collector = () {
         return <DiagnosticsNode>[
@@ -114,12 +113,11 @@ class MeetNetworkImageProvider extends ImageProvider<MeetNetworkImageProvider> {
     if (isURLEmpty()) return await _loadPlaceholderAsset();
     try {
       final response = await http.get(Uri.parse(imageUrl), headers: headers);
-      if (response == null || response.statusCode != 200) {
+      if (response.statusCode != 200) {
         if (errorListener != null) {
-          errorListener();
+          errorListener!();
         } else {
-          print('${response.statusCode ?? "NETWORK ERROR!!"}\t' +
-              '${response.body ?? "Nothing received"}');
+          print('${response.statusCode}\t' + '${response.body}');
         }
         return Future<ui.Codec>.error("Couldn't download or retrieve file");
       }
@@ -140,7 +138,7 @@ class MeetNetworkImageProvider extends ImageProvider<MeetNetworkImageProvider> {
 
     if (bytes.lengthInBytes == 0) {
       if (errorListener != null) {
-        errorListener();
+        errorListener!();
       } else {
         logError("NETWORK ERROR!!", "Response was empty");
       }

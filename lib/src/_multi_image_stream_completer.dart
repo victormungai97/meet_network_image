@@ -6,19 +6,18 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/scheduler.dart';
 
 /// Slows down animations by this factor to help in development.
-double get timeDilation => _timeDilation;
-double _timeDilation = 1.0;
+double? get timeDilation => _timeDilation;
+double? _timeDilation = 1.0;
 
 /// MultiImageStreamCompleter needs version ^1.18.0-8.0.pre
 /// Released to dev at 24/04/2020
 class MultiImageStreamCompleter extends ImageStreamCompleter {
   MultiImageStreamCompleter({
-    @required Future<ui.Codec> codec,
-    @required double scale,
-    Stream<ImageChunkEvent> chunkEvents,
-    InformationCollector informationCollector,
-  })  : assert(codec != null),
-        _informationCollector = informationCollector,
+    required Future<ui.Codec> codec,
+    required double scale,
+    Stream<ImageChunkEvent>? chunkEvents,
+    InformationCollector? informationCollector,
+  })  : _informationCollector = informationCollector,
         _scale = scale {
     codec.then((event) {
       if (_timer != null) {
@@ -51,18 +50,18 @@ class MultiImageStreamCompleter extends ImageStreamCompleter {
     }
   }
 
-  ui.Codec _codec;
-  ui.Codec _nextImageCodec;
+  ui.Codec? _codec;
+  ui.Codec? _nextImageCodec;
   final double _scale;
-  final InformationCollector _informationCollector;
-  ui.FrameInfo _nextFrame;
+  final InformationCollector? _informationCollector;
+  ui.FrameInfo? _nextFrame;
   // When the current was first shown.
-  Duration _shownTimestamp;
+  Duration? _shownTimestamp;
   // The requested duration for the current frame;
-  Duration _frameDuration;
+  Duration? _frameDuration;
   // How many frames have been emitted so far.
   int _framesEmitted = 0;
-  Timer _timer;
+  Timer? _timer;
 
   // Used to guard against registering multiple _handleAppFrame callbacks for the same frame.
   bool _frameCallbackScheduled = false;
@@ -74,7 +73,7 @@ class MultiImageStreamCompleter extends ImageStreamCompleter {
     _nextImageCodec = null;
   }
 
-  void _handleCodecReady(ui.Codec codec) {
+  void _handleCodecReady(ui.Codec? codec) {
     _codec = codec;
     assert(_codec != null);
 
@@ -87,23 +86,23 @@ class MultiImageStreamCompleter extends ImageStreamCompleter {
     _frameCallbackScheduled = false;
     if (!hasListeners) return;
     if (_isFirstFrame() || _hasFrameDurationPassed(timestamp)) {
-      _emitFrame(ImageInfo(image: _nextFrame.image, scale: _scale));
+      _emitFrame(ImageInfo(image: _nextFrame!.image, scale: _scale));
       _shownTimestamp = timestamp;
-      _frameDuration = _nextFrame.duration;
+      _frameDuration = _nextFrame!.duration;
       _nextFrame = null;
-      if (_framesEmitted % _codec.frameCount == 0 && _nextImageCodec != null) {
+      if (_framesEmitted % _codec!.frameCount == 0 && _nextImageCodec != null) {
         _switchToNewCodec();
       } else {
-        final int completedCycles = _framesEmitted ~/ _codec.frameCount;
-        if (_codec.repetitionCount == -1 ||
-            completedCycles <= _codec.repetitionCount) {
+        final int completedCycles = _framesEmitted ~/ _codec!.frameCount;
+        if (_codec!.repetitionCount == -1 ||
+            completedCycles <= _codec!.repetitionCount) {
           _decodeNextFrameAndSchedule();
         }
       }
       return;
     }
-    final Duration delay = _frameDuration - (timestamp - _shownTimestamp);
-    _timer = Timer(delay * timeDilation, _scheduleAppFrame);
+    final Duration delay = _frameDuration! - (timestamp - _shownTimestamp!);
+    _timer = Timer(delay * timeDilation!, _scheduleAppFrame);
   }
 
   bool _isFirstFrame() {
@@ -112,12 +111,12 @@ class MultiImageStreamCompleter extends ImageStreamCompleter {
 
   bool _hasFrameDurationPassed(Duration timestamp) {
     assert(_shownTimestamp != null);
-    return timestamp - _shownTimestamp >= _frameDuration;
+    return timestamp - _shownTimestamp! >= _frameDuration!;
   }
 
   Future<void> _decodeNextFrameAndSchedule() async {
     try {
-      _nextFrame = await _codec.getNextFrame();
+      _nextFrame = await _codec!.getNextFrame();
     } catch (exception, stack) {
       reportError(
         context: ErrorDescription('resolving an image frame'),
@@ -128,10 +127,10 @@ class MultiImageStreamCompleter extends ImageStreamCompleter {
       );
       return;
     }
-    if (_codec.frameCount == 1) {
+    if (_codec!.frameCount == 1) {
       // This is not an animated image, just return it and don't schedule more
       // frames.
-      _emitFrame(ImageInfo(image: _nextFrame.image, scale: _scale));
+      _emitFrame(ImageInfo(image: _nextFrame!.image, scale: _scale));
       return;
     }
     _scheduleAppFrame();
@@ -142,7 +141,7 @@ class MultiImageStreamCompleter extends ImageStreamCompleter {
       return;
     }
     _frameCallbackScheduled = true;
-    SchedulerBinding.instance.scheduleFrameCallback(_handleAppFrame);
+    SchedulerBinding.instance!.scheduleFrameCallback(_handleAppFrame);
   }
 
   void _emitFrame(ImageInfo imageInfo) {

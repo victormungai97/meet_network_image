@@ -28,30 +28,30 @@ class MyApp extends StatelessWidget {
                   imageUrl:
                       "https://random.dog/3f62f2c1-e0cb-4077-8cd9-1ca76bfe98d5.jpg",
                   loadingBuilder: (context) => Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                    child: CircularProgressIndicator(),
+                  ),
                   errorBuilder: (context, e) => Center(
-                        child: Text('Error appear!'),
-                      ),
+                    child: Text('Error appear!'),
+                  ),
                 ),
                 MeetNetworkImage(
                   imageUrl:
                       "https://random.dog/3f62f2c1-e0cb-4077-8cd9-1ca76bfe98d5.jpg",
                   loadingBuilder: (context) => Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                    child: CircularProgressIndicator(),
+                  ),
                   errorBuilder: (context, e) => Center(
-                        child: Text('Error appear!'),
-                      ),
+                    child: Text('Error appear!'),
+                  ),
                 ),
                 MeetNetworkImage(
                   imageUrl: "asdqwdsadasdaedaedaeadeassda",
                   loadingBuilder: (context) => Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                    child: CircularProgressIndicator(),
+                  ),
                   errorBuilder: (context, e) => Center(
-                        child: Text('Error appear!'),
-                      ),
+                    child: Text('Error appear!'),
+                  ),
                 ),
                 SizedBox(
                   height: 100,

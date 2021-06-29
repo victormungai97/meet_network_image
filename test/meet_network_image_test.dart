@@ -12,12 +12,12 @@ void main() {
     MeetNetworkImage meetNetworkImage = MeetNetworkImage(
       imageUrl: imageUrl,
       loadingBuilder: (BuildContext context) => Container(),
-      errorBuilder: (BuildContext context, Object error) => Container(),
+      errorBuilder: (BuildContext context, Object? error) => Container(),
     );
 
     var actualResponse = await meetNetworkImage.getUrlResponse();
 
-    var currentResponse = await http.get(imageUrl);
+    var currentResponse = await http.get(Uri.parse(imageUrl));
 
     expect(currentResponse.bodyBytes, actualResponse.bodyBytes);
   });

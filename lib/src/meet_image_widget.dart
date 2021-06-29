@@ -4,6 +4,7 @@
 /// Implemented using a [FutureBuilder],
 /// Courtesy of https://github.com/onatcipli/meet_network_image
 
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
@@ -12,7 +13,7 @@ import 'package:flutter/foundation.dart';
 typedef LoadingBuilder = Widget Function(BuildContext context);
 
 /// Builds a widget if some error occurs
-typedef ErrorBuilder = Widget Function(BuildContext context, Object error);
+typedef ErrorBuilder = Widget Function(BuildContext context, Object? error);
 
 class MeetNetworkImage extends StatelessWidget {
   /// Image url that you want to show in app
@@ -39,7 +40,7 @@ class MeetNetworkImage extends StatelessWidget {
   /// layout constraints, so that the image does not change size as it loads.
   /// Consider using [fit] to adapt the image's rendering to fit the given width
   /// and height if the exact image dimensions are not known in advance.
-  final double width;
+  final double? width;
 
   /// If non-null, require the image to have this height.
   ///
@@ -51,10 +52,10 @@ class MeetNetworkImage extends StatelessWidget {
   /// layout constraints, so that the image does not change size as it loads.
   /// Consider using [fit] to adapt the image's rendering to fit the given width
   /// and height if the exact image dimensions are not known in advance.
-  final double height;
+  final double? height;
 
   /// If non-null, this color is blended with each image pixel using [colorBlendMode].
-  final Color color;
+  final Color? color;
 
   /// Used to set the [FilterQuality] of the image.
   ///
@@ -71,13 +72,13 @@ class MeetNetworkImage extends StatelessWidget {
   /// See also:
   ///
   ///  * [BlendMode], which includes an illustration of the effect of each blend mode.
-  final BlendMode colorBlendMode;
+  final BlendMode? colorBlendMode;
 
   /// How to inscribe the image into the space allocated during layout.
   ///
   /// The default varies based on the other fields. See the discussion at
   /// [paintImage].
-  final BoxFit fit;
+  final BoxFit? fit;
 
   /// How to align the image within its bounds.
   ///
@@ -116,7 +117,7 @@ class MeetNetworkImage extends StatelessWidget {
   /// region of the image above and below the center slice will be stretched
   /// only horizontally and the region of the image to the left and right of
   /// the center slice will be stretched only vertically.
-  final Rect centerSlice;
+  final Rect? centerSlice;
 
   /// Whether to paint the image in the direction of the [TextDirection].
   ///
@@ -143,7 +144,7 @@ class MeetNetworkImage extends StatelessWidget {
   ///
   /// Used to provide a description of the image to TalkBack on Android, and
   /// VoiceOver on iOS.
-  final String semanticLabel;
+  final String? semanticLabel;
 
   /// Whether to exclude this image from semantics.
   ///
@@ -152,13 +153,13 @@ class MeetNetworkImage extends StatelessWidget {
   final bool excludeFromSemantics;
 
   /// Headers required when loading the image, if any
-  final Map<String, String> headers;
+  final Map<String, String>? headers;
 
   MeetNetworkImage({
-    Key key,
-    @required this.imageUrl,
-    @required this.loadingBuilder,
-    @required this.errorBuilder,
+    Key? key,
+    required this.imageUrl,
+    required this.loadingBuilder,
+    required this.errorBuilder,
     this.fit,
     this.color,
     this.width,
@@ -174,19 +175,13 @@ class MeetNetworkImage extends StatelessWidget {
     this.excludeFromSemantics = false,
     this.repeat = ImageRepeat.noRepeat,
     this.filterQuality = FilterQuality.low,
-  })  : assert(imageUrl != null),
-        assert(loadingBuilder != null),
-        assert(errorBuilder != null),
-        assert(alignment != null),
-        assert(filterQuality != null),
-        assert(repeat != null),
-        assert(matchTextDirection != null);
+  });
 
   Future<http.Response> getUrlResponse() =>
       http.get(Uri.parse(imageUrl), headers: headers);
 
   /// This function will check to ensure that the [imageUrl] provided exists
-  bool isURLEmpty() => imageUrl == null || imageUrl == "" || imageUrl.isEmpty;
+  bool isURLEmpty() => StringUtils.isNullOrEmpty(imageUrl);
 
   @override
   Widget build(BuildContext context) {
@@ -195,7 +190,7 @@ class MeetNetworkImage extends StatelessWidget {
         : FutureBuilder(
             builder:
                 (BuildContext context, AsyncSnapshot<http.Response> snapshot) {
-              Widget result;
+              late Widget result;
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
                 case ConnectionState.waiting:
@@ -207,7 +202,7 @@ class MeetNetworkImage extends StatelessWidget {
                     result = errorBuilder(context, snapshot.error);
                   } else {
                     result = Image.memory(
-                      snapshot.data.bodyBytes,
+                      snapshot.data!.bodyBytes,
                       scale: scale,
                       height: height,
                       width: width,

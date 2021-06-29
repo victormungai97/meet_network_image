@@ -5,13 +5,15 @@ author: Onat Cipli<ciplionat35@gmail.com>
 homepage: https://github.com/onatcipli/meet_network_image
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  http: ^0.13.1
+  http: ^0.13.3
+
+  basic_utils: ^3.3.2
 
 dev_dependencies:
   flutter_test:
