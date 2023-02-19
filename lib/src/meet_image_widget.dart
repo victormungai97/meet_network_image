@@ -4,10 +4,10 @@
 /// Implemented using a [FutureBuilder],
 /// Courtesy of https://github.com/onatcipli/meet_network_image
 
-import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:async/async.dart';
 
 /// Builds a widget when the connectionState is none and waiting
 typedef LoadingBuilder = Widget Function(BuildContext context);
@@ -177,11 +177,14 @@ class MeetNetworkImage extends StatelessWidget {
     this.filterQuality = FilterQuality.low,
   });
 
-  Future<http.Response> getUrlResponse() =>
-      http.get(Uri.parse(imageUrl), headers: headers);
+  Future<http.Response> getUrlResponse() {
+      return this._memoizer.runOnce(() async => http.get(Uri.parse(imageUrl), headers: headers));
+  }
 
   /// This function will check to ensure that the [imageUrl] provided exists
-  bool isURLEmpty() => StringUtils.isNullOrEmpty(imageUrl);
+  bool isURLEmpty() => imageUrl != null && imageUrl.isNotEmpty;
+  
+  final _memoizer = AsyncMemoizer<String>();
 
   @override
   Widget build(BuildContext context) {
