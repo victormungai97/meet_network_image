@@ -57,7 +57,7 @@ class MeetNetworkImageProvider extends ImageProvider<MeetNetworkImageProvider> {
   });
 
   /// This function will check to ensure that the [imageUrl] provided exists
-  bool isURLEmpty() => imageUrl != null && imageUrl.isNotEmpty;
+  bool isURLEmpty() => imageUrl == null || imageUrl.isEmpty;
 
   @override
   Future<MeetNetworkImageProvider> obtainKey(ImageConfiguration configuration) {
