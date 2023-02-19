@@ -184,7 +184,7 @@ class MeetNetworkImage extends StatelessWidget {
   }
 
   /// This function will check to ensure that the [imageUrl] provided exists
-  bool isURLEmpty() => imageUrl != null && imageUrl.isNotEmpty;
+  bool isURLEmpty() => imageUrl == null || imageUrl.isEmpty;
   
   final _memoizer = AsyncMemoizer<http.Response>();
 
