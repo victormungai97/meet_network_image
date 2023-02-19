@@ -8,7 +8,6 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui show instantiateImageCodec, Codec;
 
-import 'package:basic_utils/basic_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +57,7 @@ class MeetNetworkImageProvider extends ImageProvider<MeetNetworkImageProvider> {
   });
 
   /// This function will check to ensure that the [imageUrl] provided exists
-  bool isURLEmpty() => StringUtils.isNullOrEmpty(imageUrl);
+  bool isURLEmpty() => imageUrl != null && imageUrl.isNotEmpty;
 
   @override
   Future<MeetNetworkImageProvider> obtainKey(ImageConfiguration configuration) {
