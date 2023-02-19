@@ -178,13 +178,15 @@ class MeetNetworkImage extends StatelessWidget {
   });
 
   Future<http.Response> getUrlResponse() {
-      return this._memoizer.runOnce(() async => http.get(Uri.parse(imageUrl), headers: headers));
+      return this._memoizer.runOnce(
+        () async => await http.get(Uri.parse(imageUrl), headers: headers),
+      );
   }
 
   /// This function will check to ensure that the [imageUrl] provided exists
   bool isURLEmpty() => imageUrl != null && imageUrl.isNotEmpty;
   
-  final _memoizer = AsyncMemoizer<String>();
+  final _memoizer = AsyncMemoizer<http.Response>();
 
   @override
   Widget build(BuildContext context) {
